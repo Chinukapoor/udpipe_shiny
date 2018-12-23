@@ -1,14 +1,5 @@
-options(shiny.maxRequestSize=30*1024^2)
-library(igraph)
-library(ggraph)
-library(ggplot2)
-library(shiny)
-library(udpipe)
-library(shinythemes)
-library(dplyr)
-require(stringr)
-library(wordcloud)
 server <- function(input, output) {
+  options(shiny.maxRequestSize = 50*1024^2)
   
   dataset <- reactive({
     inFile <- input$file1
@@ -26,7 +17,12 @@ server <- function(input, output) {
   english_model = reactive({
     x <- udpipe_download_model(language = input$select)
     ud_english <- udpipe_load_model(x$file_model)
+    shinyalert(title = paste("Udpipe Model uploaded for", input$select), type = "success", timer=5000)
     return(ud_english)
+  })
+  observeEvent(input$select, {
+          english_model() 
+          
   })
   
   
@@ -69,15 +65,15 @@ server <- function(input, output) {
   }
   )
   output$coocplot = renderPlot({
-    nokia_cooc <- cooccurrence(   	
+      nokia_cooc <- cooccurrence(   	
       x = subset(annotated_obj(), upos %in% input$upos), 
       term = "lemma", 
       group = c("doc_id", "paragraph_id", "sentence_id"))
     
-    wordnetwork <- head(nokia_cooc, 50)
-    wordnetwork <- igraph::graph_from_data_frame(wordnetwork) # needs edgelist in first 2 colms.
-    
-    ggraph(wordnetwork, layout = "fr") +  
+      wordnetwork <- head(nokia_cooc, 50)
+      wordnetwork <- igraph::graph_from_data_frame(wordnetwork) # needs edgelist in first 2 colms.
+      
+      ggraph(wordnetwork, layout = "fr") +  
       
       geom_edge_link(aes(width = cooc, edge_alpha = cooc), edge_colour = "orange") +  
       geom_node_text(aes(label = name), col = "darkgreen", size = 6) +
@@ -87,11 +83,8 @@ server <- function(input, output) {
       
       labs(title = "Cooccurrences within 3 words distance", subtitle = "Select the check boxes in the left pane")
   })
-  
-  
+    
+                      
   
   
 }
-
-
-
