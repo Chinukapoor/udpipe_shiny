@@ -1,6 +1,6 @@
 ui <- fluidPage(
   theme = shinytheme("united"),
-  titlePanel("NLP Basics in R"),
+  titlePanel("Exploring Text-An using UDPipe"),
   tags$style("
              .checkbox { /* checkbox is a div class*/
              line-height: 5px;
@@ -19,74 +19,104 @@ ui <- fluidPage(
              "),
   sidebarLayout(
     sidebarPanel(
-      fileInput("file1", "Choose CSV File",
+      fileInput("file1", "Choose Text File",  #to take the file input from the user
                 accept = c(
                   "text/csv",
                   "text/comma-separated-values,text/plain",
                   ".csv")
                 
       ),
-     
+      
       
       tags$hr(),
       
       checkboxGroupInput(inputId = 'upos',
-                         label = p('Parts of Speech for co-occurrances filtering'),
-                         choices =list("adjective"= "ADJ",
+                         label = p('Choose pos for co-occurences filtering:'),
+                         choices =list("Adjective"= "ADJ",
                                        "Noun" = "NOUN",
-                                       "proper noun" = "PROPN",
-                                       "adverb"="ADV","verb"= "VERB"),
+                                       "Proper noun" = "PROPN",
+                                       "Adverb"="ADV",
+                                       "Verb"= "VERB"),
                          selected = c("ADJ","NOUN","PROPN")
-      
-    ),
+                         
+      ),
       tags$hr(),
       
       selectInput("select", 
-                  label = p("Select Language"), 
+                  label = p("Select Language"), #available options for UDPipe models
                   choices = c("english","spanish", "french","german","hindi","korean","persian",
                               "chinese","dutch","irish","italian","latin","greek","japanese","portuguese"), 
-                  selected = NULL,
-                  selectize = FALSE
-                  ),
-      useShinyalert(),
-      useShinyjs()# Set up shinyalert
-    
-    
+                  selected = NULL
+      ),
+      useShinyalert(), #for shiny alerts
+      useShinyjs() 
+      
+      
     ),
     mainPanel(
       
       tabsetPanel(type = "tabs",   
                   
-                  tabPanel("Overview",   
+                  tabPanel("Overview", 
                            h4("App Details"),
+                           p("For the best user experience, open in browser (recommended)", align="justify"),
+                           br(),
+                           p("This application performs basic NLP functions for a given text corpus:", align="justify"),
+                           p("1. Word Clouds for part of speech tags"),
+                           p("2. Co-occurence Graph for pos tags"),
+                           p("3. Basic sentiment analysis for polarity (valid for english text only"),
+                           br(),
+                           withSpinner(textOutput("lang"), type = getOption("spinner.type", default = 6),
+                                       size = getOption("spinner.size", default = 1)),
+                           br(),
                            
-                           p("This application performs basic NLP functions for a given \
-                             text corpus.", align="justify"),
+                           p("By default, the udpipe for English is downloaded when you launch the App."
+                             , align="justify"),
+                           
+                           p("You are free to choose a udpipe model from the drop down on the left side panel.\
+                             The App downloads it for you and sets it for your workspace.",style = "color:red"),
+                           
+                           h4("How to use the App",style = "color:black"),
+                           
+                           p("Upload your text corpus through the file upload option on the top left.", align="justify"),
+                           
+                           p("Click on Word Cloud, Co-occurences graph and Simple Sentiment Analysis to dive into your text corpus.",
+                             style="color:black"),
+                           
                            br(),
-                           br(),
-                           p("By Default, the udpipe for English is download. You need NOT upload a \
-                             udpipe."),
-                           br(),
-                           p("Instead choose a udpipe model from the drop down.\
-                             It will be downloaded to your workspace. "),
-                           br(),
-                           withSpinner(textOutput("lang")),
                            tableOutput("contents")
                            ),
                   tabPanel("Word Clouds",
                            h4("Verbs"),
-                           plotOutput('wcplot2', width="100%"),
+                           withSpinner(plotOutput('word_cld_plot2', width="100%"), type = getOption("spinner.type", default = 6),
+                                       size = getOption("spinner.size", default = 1)),
                            h4("Nouns"),
-                           plotOutput("wcplot1", width = "100%"),
+                           withSpinner(plotOutput("word_cld_plot1", width = "100%"), type = getOption("spinner.type", default = 6),
+                                       size = getOption("spinner.size", default = 1)),
                            h4("Adjective"),
-                           plotOutput("wcplot3", width = "100%"),
+                           withSpinner(plotOutput("word_cld_plot3", width = "100%"), type = getOption("spinner.type", default = 6),
+                                       size = getOption("spinner.size", default = 1)),
                            h4("Adverbs"),
-                           plotOutput("wcplot4"),
+                           withSpinner(plotOutput("word_cld_plot4"), type = getOption("spinner.type", default = 6),
+                                       size = getOption("spinner.size", default = 1)),
                            h4("Proper Nouns"),
-                           plotOutput("wcplot5")
+                           withSpinner(plotOutput("word_cld_plot5"), type = getOption("spinner.type", default = 6),
+                                       size = getOption("spinner.size", default = 1))
+                           
+                           
                   ),
                   tabPanel("Co-occurences Graph",
                            h4("Co-occurrences"),
-                           plotOutput('coocplot')
-                          ))
-                  )))
+                           withSpinner(plotOutput('coocrencesplot'), type = getOption("spinner.type", default = 6),
+                                       size = getOption("spinner.size", default = 1))
+                           
+                  ),
+                  
+                  tabPanel("Simple Sentiment Analysis",
+                           h4("Polarity of the text"),
+                           p("Please upload English text to see the sentiment graph.", style="color:brown"),
+                           withSpinner(plotOutput("senti_plot"), type = getOption("spinner.type", default = 6),
+                                       size = getOption("spinner.size", default = 1))
+                  )
+                  
+      ))))
