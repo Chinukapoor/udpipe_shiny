@@ -1,3 +1,4 @@
+#Ayush Kapoor - 11810053 #Kumar Varun - 11810114 #Rohit Motwani- 11810079
 server <- function(input, output) {
   options(shiny.maxRequestSize = 50*1024^2)
   dataset <- reactive({
