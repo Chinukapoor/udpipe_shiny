@@ -1,13 +1,3 @@
-library(igraph)
-library(ggraph)
-library(ggplot2)
-library(shiny)
-library(udpipe)
-library(shinythemes)
-library(dplyr)
-require(stringr)
-library(wordcloud)
-
 ui <- fluidPage(
   theme = shinytheme("united"),
   titlePanel("NLP Basics in R"),
@@ -36,6 +26,7 @@ ui <- fluidPage(
                   ".csv")
                 
       ),
+     
       
       tags$hr(),
       
@@ -49,12 +40,18 @@ ui <- fluidPage(
       
     ),
       tags$hr(),
+      
       selectInput("select", 
                   label = p("Select Language"), 
-                  choices = c("english","spanish", "french","german","hindi"), 
-                  selected = NULL)
-      
-      
+                  choices = c("english","spanish", "french","german","hindi","korean","persian",
+                              "chinese","dutch","irish","italian","latin","greek","japanese","portuguese"), 
+                  selected = NULL,
+                  selectize = FALSE
+                  ),
+      useShinyalert(),
+      useShinyjs()# Set up shinyalert
+    
+    
     ),
     mainPanel(
       
@@ -73,7 +70,7 @@ ui <- fluidPage(
                            p("Instead choose a udpipe model from the drop down.\
                              It will be downloaded to your workspace. "),
                            br(),
-                           textOutput("lang"),
+                           withSpinner(textOutput("lang")),
                            tableOutput("contents")
                            ),
                   tabPanel("Word Clouds",
@@ -93,4 +90,3 @@ ui <- fluidPage(
                            plotOutput('coocplot')
                           ))
                   )))
-
