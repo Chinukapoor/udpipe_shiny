@@ -1,3 +1,4 @@
+options(shiny.maxRequestSize=30*1024^2)
 library(igraph)
 library(ggraph)
 library(ggplot2)
