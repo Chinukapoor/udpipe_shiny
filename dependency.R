@@ -8,6 +8,10 @@ if (!require(ggplot2)){install.packages("ggplot2")}
 if (!require(stringr)){install.packages("stringr")}
 if (!require(wordcloud)){install.packages("wordcloud")}
 if (!require(shinythemes)){install.packages("shinythemes")}
+if (!require(shinyalert)){install.packages("shinyalert")}
+if (!require(shinycssloaders)){install.packages("shinycssloaders")}
+if (!require(shinyjs)){install.packages("shinyjs")}
+
 
 library(shiny)
 library(dplyr)
@@ -18,3 +22,6 @@ library(ggraph)
 library(ggplot2)
 library(stringr)
 library(shinythemes)
+library(shinyalert)
+library(shinycssloaders)
+library(shinyjs)
